@@ -18,8 +18,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 const Gallery: NextPage = () => {
   const [activeYear, setActiveYear] = useState<number>(0);
   const swiperRef = useRef<SwiperType>();
-  const years = [2019, 2020, 2022, 2023, 2024];
-  const imageCounts = [29, 12, 26, 26, 0];
+  const years = [0, 2019, 2020, 2022, 2023, 2024];
+  const imageCounts = [0, 29, 12, 26, 26, 0];
 
   const generateImagePaths = (
     year: number,
@@ -115,7 +115,8 @@ const Gallery: NextPage = () => {
         {/* Pc Section */}
         <div className="min-h-screen overflow-y-auto z-0">
           {years.map((year, index) => {
-            if (index === 4) return;
+            if (index === 5) return;
+            if (index === 0) return;
             return (
               <h1
                 key={year}
@@ -144,6 +145,11 @@ const Gallery: NextPage = () => {
             allowTouchMove={false}
             className="sm:w-full h-full relative flex"
           >
+            <SwiperSlide className="flex justify-center items-center text-center">
+              <div className="relative w-full h-full flex justify-center items-center">
+                <GallerySlide title={0} imgArr={img2024} emulator="initial" />
+              </div>
+            </SwiperSlide>
             <SwiperSlide className="flex justify-center items-center text-center">
               <div className="relative w-full h-full flex justify-center items-center">
                 <GallerySlide title={2019} imgArr={img2019} emulator="gba" />

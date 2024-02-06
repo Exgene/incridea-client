@@ -10,11 +10,18 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ year }) => {
-  const totalYears = 5;
+  const totalYears = 6;
   const filledSteps = Math.min(year + 1, totalYears);
   const [loadedSteps, setLoadedSteps] = useState(0);
   const characterRef = useRef<HTMLImageElement | null>(null);
-  const powerUpImages = ["level", "coin", "witchHat", "sword", "dice"];
+  const powerUpImages = [
+    "pacman",
+    "level",
+    "coin",
+    "witchHat",
+    "sword",
+    "dice",
+  ];
 
   useEffect(() => {
     const elements = document.querySelectorAll(`.${styles["progress-step"]}`);
@@ -32,7 +39,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ year }) => {
           element,
           { opacity: 0, scale: 0.5 },
           { opacity: 1, scale: 1, duration: 0.5, ease: "sine.inOut" },
-          0 
+          0
         );
 
         const elementRect = element.getBoundingClientRect();
@@ -62,7 +69,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ year }) => {
         element.classList.remove(styles.filled);
       }
     });
-
   }, [filledSteps, loadedSteps, year]);
 
   return (

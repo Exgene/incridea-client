@@ -13,13 +13,14 @@ import BlurImage from "../blurImage";
 import Console from "./devices/conosole-component";
 import FinalComponent from "./devices/final-component";
 import GbaComponent from "./devices/gba-component";
+import InitialComponent from "./devices/initial-component";
 import RetroPC from "./devices/retropc-component";
 import RetroTV from "./devices/retrotv-component";
 
 type GalleryProps = {
   title: number;
   imgArr: string[];
-  emulator: "gba" | "retroPC" | "console" | "retroTV" | "final";
+  emulator: "gba" | "retroPC" | "console" | "retroTV" | "final" | "initial";
 };
 
 const GallerySlide: FC<GalleryProps> = ({ title, imgArr, emulator }) => {
@@ -35,9 +36,12 @@ const GallerySlide: FC<GalleryProps> = ({ title, imgArr, emulator }) => {
 
     case "retroTV":
       return <RetroTV imgArr={imgArr} />;
-      
+
     case "final":
       return <FinalComponent />;
+
+    case "initial":
+      return <InitialComponent />;
   }
 };
 
