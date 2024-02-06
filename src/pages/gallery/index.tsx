@@ -72,14 +72,17 @@ const Gallery: NextPage = () => {
       yAng ? y.set(yAng / 100) : null;
     });
   }, [activeYear, x, y]);
-  const img2019: string[] = generateImagePaths(years[0], imageCounts[0], "jpg");
-  const img2020: string[] = generateImagePaths(years[1], imageCounts[1], "jpg");
-  const img2022: string[] = generateImagePaths(years[2], imageCounts[2], "jpg");
-  const img2023: string[] = generateImagePaths(years[3], imageCounts[3], "jpg");
+  const img2019: string[] = generateImagePaths(years[1], imageCounts[1], "jpg");
+  const img2020: string[] = generateImagePaths(years[2], imageCounts[2], "jpg");
+  const img2022: string[] = generateImagePaths(years[3], imageCounts[3], "jpg");
+  const img2023: string[] = generateImagePaths(years[4], imageCounts[4], "jpg");
 
   //Not needed but refactoring not worth it
-  const img2024: string[] = generateImagePaths(years[4], imageCounts[4], "jpg");
+  const img2024: string[] = generateImagePaths(years[5], imageCounts[5], "jpg");
 
+  useEffect(() => {
+    console.log(img2019);
+  });
   const mouseXSpring = useSpring(x);
   const mouseYSpring = useSpring(y);
   const rotateX = useTransform(
