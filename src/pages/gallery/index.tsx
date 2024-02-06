@@ -36,7 +36,7 @@ const Gallery: NextPage = () => {
   const y = useMotionValue(0.5);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (activeYear===1) {
       toast.success(
         "Feel free to interact with the console, Swipe the screens etc to interact!",
         {
@@ -131,7 +131,7 @@ const Gallery: NextPage = () => {
                   }`
                 }
               >
-                INCRIDEA <span className="tracking-tight">{year}</span>
+                Incridea <span className="tracking-tight">{year}</span>
               </h1>
             );
           })}
