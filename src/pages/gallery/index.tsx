@@ -211,7 +211,8 @@ const Gallery: NextPage = () => {
                 }}
                 className={`h-6 w-auto duration-75 transition-all ease-in-out z-20`}
               >
-                <Image
+                {
+                  activeYear===0 || <Image
                   src={`${baseImageUrl}/assets/svg/8bitArrow.svg`}
                   alt="arrow-previous"
                   width={50}
@@ -224,6 +225,7 @@ const Gallery: NextPage = () => {
                       "drop-shadow(1px 1px 0 black) drop-shadow(-1px -1px 0 black)",
                   }}
                 ></Image>
+                }
               </button>
               <button
                 id="float"
@@ -243,22 +245,23 @@ const Gallery: NextPage = () => {
                   });
                   return swiperRef.current?.slideNext();
                 }}
-                className="z-[500] h-6 w-auto duration-75 transition-all ease-in-out"
+                className="h-6 w-auto duration-75 transition-all ease-in-out"
               >
-                <Image
+                {
+                activeYear===years.length || <Image
                   src={`${baseImageUrl}/assets/svg/8bitArrow.svg`}
                   alt="arrow-next"
                   width={50}
                   height={50}
                   //  -webkit-filter: drop-shadow(1px 1px 0 black) drop-shadow(-1px -1px 0 black);filter: drop-shadow(1px 1px 0 black) drop-shadow(-1px -1px 0 black);
-                  className="w-12 z-[500] h-12 md:w-20 md:h-20"
+                  className="w-12 z-20 h-12 md:w-20 md:h-20"
                   style={{
                     filter:
                       "drop-shadow(1px 1px 0 black) drop-shadow(-1px -1px 0 black)",
                     WebkitFilter:
                       "drop-shadow(1px 1px 0 black) drop-shadow(-1px -1px 0 black)",
                   }}
-                ></Image>
+                ></Image>}
               </button>
             </div>
           </Swiper>
