@@ -34,7 +34,13 @@ function EventRegistration({
   if (loading) return null;
   return (
     <>
-      {!user ? (
+      {eventId === "29" || eventId === "50" ? (
+        <div className="bg-green-500/30 border border-green-500 backdrop-blur-3xl w-full flex justify-center p-1 rounded-full">
+          {eventId === "29"
+            ? "Event is open on all 3 days"
+            : "Event is only open for N.M.A.M.I.T faculties"}
+        </div>
+      ) : !user ? (
         <Link
           as={"/login"}
           href={`/login?redirectUrl=${encodeURIComponent(`/event/${slug}`)}`}
@@ -154,15 +160,17 @@ function EventRegistrationButton({
     if (type === "INDIVIDUAL" || type === "INDIVIDUAL_MULTIPLE_ENTRY") {
       if (fees === 0) {
         return (
-          <Button
-            noScaleOnHover
-            className="!skew-x-0 !rounded-full justify-center !text-xl"
-            onClick={handleSoloRegister}
-            fullWidth
-            intent={"primary"}
-          >
-            Register Now
-          </Button>
+          <>
+            <Button
+              noScaleOnHover
+              className="!skew-x-0 !rounded-full justify-center !text-xl"
+              onClick={handleSoloRegister}
+              fullWidth
+              intent={"primary"}
+            >
+              Register Now
+            </Button>
+          </>
         );
       } else {
         return (
@@ -174,7 +182,7 @@ function EventRegistrationButton({
             noScaleOnHover
             className="!skew-x-0 !rounded-full justify-center"
           >
-            Pay ₹{fees} and Register
+            Pay <span className="font-normal">₹{fees}</span> and Register
           </Button>
         );
       }

@@ -4,6 +4,7 @@ import {
   GetXpLeaderboardDocument,
   User,
 } from "@/src/generated/generated";
+import Link from "next/link";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { FC, useEffect, useState } from "react";
@@ -62,25 +63,24 @@ const ProfileInfo: FC<{
         { length: levels + 1 },
         (_, i) => (i + 1) * 10
       );
-
       // Calculate the user's current level based on the thresholds
       let level = 0;
       let totalPoints = 0;
+      let levelPoints = 0;
       for (let i = 0; i < newLevelThresholds.length; i++) {
-        if (totalXp >= totalPoints + newLevelThresholds[i]) {
+        if (totalXp >= totalPoints) {
           level++;
           totalPoints += newLevelThresholds[i];
+          levelPoints = newLevelThresholds[i];
         } else {
           break;
         }
       }
-
-      setLevel(level);
+      setLevel(level-1);
       setXp(totalXp);
       setUser(userXp.data.getUserXp?.data[0]?.user.id);
-      const xpNext = newLevelThresholds.reduce((acc, curr) => acc + curr, 0);
-      setNeedMore(xpNext - totalXp);
-      setProgress(100 - ((xpNext - totalXp) / xpNext) * 100);
+      setNeedMore(totalPoints - totalXp);
+      setProgress(((levelPoints-totalPoints + totalXp) / levelPoints) * 100);
     }
   }, [userXp.data]);
 
@@ -89,6 +89,7 @@ const ProfileInfo: FC<{
       levelPoints: number;
       name: string;
       count: number;
+      createdAt: string;
     };
   }
   const { data: Leaderboard, loading: leaderboardLoading } = useQuery(
@@ -117,18 +118,24 @@ const ProfileInfo: FC<{
         const levelPoints: number = item.level.point;
         const userName: string = item.user.name;
         const levelCount: number = 1;
+        const createdAt: string = item.createdAt;
 
         // Check if the user ID is already in the userTotalPoints object
         if (userTotalPoints[userId]) {
           // If yes, add the level points to the existing total
           userTotalPoints[userId].levelPoints += levelPoints;
           userTotalPoints[userId].count += levelCount;
+          //store only the latest date
+          if (createdAt > userTotalPoints[userId].createdAt) {
+            userTotalPoints[userId].createdAt = createdAt;
+          }
         } else {
           // If no, create a new entry for the user ID
           userTotalPoints[userId] = {
             levelPoints,
             name: userName,
             count: 1,
+            createdAt: createdAt,
           };
         }
       });
@@ -139,15 +146,18 @@ const ProfileInfo: FC<{
           ...data,
         })
       );
-
       // Sort the array in descending order based on total points
       userTotalPointsArray.sort((a, b) => b.levelPoints - a.levelPoints);
-      console.log(userTotalPointsArray);
-      // get current user's rank
+      //also sort based on the latest date but points should be primary
+      userTotalPointsArray.sort((a, b) => {
+        if (a.levelPoints === b.levelPoints) {
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
+        return b.levelPoints - a.levelPoints;
+      });
       const currentUserRank = userTotalPointsArray.findIndex(
-        (user) => user.userId === userId
+        (item) => item.userId === userId
       );
-      console.log(currentUserRank);
       setRank(currentUserRank + 1);
     }
   }, [Leaderboard, userId]);
@@ -173,7 +183,7 @@ const ProfileInfo: FC<{
               alt="avatar"
               className="p-3 rounded-xl border hover:border-4 transition-all duration-300 cursor-pointer hover:border-primary-100/50 border-primary-100/30"
             />
-            <div className="absolute bottom-3 right-3 p-2 bg-secondary-700 rounded-full scale-0 group-hover:scale-100 transition-all duration-300">
+            <div className="absolute bottom-3 right-3 p-2 bg-secondary-700 rounded-full transition-all duration-300">
               <MdAddAPhoto />
             </div>
           </div>
@@ -223,10 +233,12 @@ const ProfileInfo: FC<{
             className="sm:h-16 sm:w-16 h-12 w-12"
           />
 
-          <div>
-            <p className="">Leaderboard</p>
-            <p className="text-secondary-600 font-bold">Rank {rank}</p>
-          </div>
+          <Link href="/leaderboard">
+            <div>
+              <p className="">Leaderboard</p>
+              <p className="text-secondary-600 font-bold">Rank {rank}</p>
+            </div>
+          </Link>
         </div>
 
         <p className="text-center">
@@ -265,35 +277,37 @@ const ProfileInfo: FC<{
               showModal={showModal}
               setShowModal={setShowModal}
             />
-            {loadingAccommodation ? (
-              <Button
-                size={"large"}
-                onClick={() => setShowModal(true)}
-                className="w-full !rounded-full bodyFont !tracking-normal !text-sm justify-center"
-              >
-                <Spinner size={"small"} className="text-[#dd5c6e]" />
-              </Button>
-            ) : dataAccommodation?.accommodationRequestsByUser[0]?.status ? (
-              <Button
-                intent={"info"}
-                size={"large"}
-                onClick={() => setShowModal(true)}
-                className="w-full !rounded-full bodyFont !tracking-normal !text-sm justify-center"
-              >
-                <RiHotelBedLine className="inline-block mr-1" />
-                View Request
-              </Button>
-            ) : (
-              <Button
-                intent={"success"}
-                size={"large"}
-                onClick={() => router.push("/accommodation")}
-                className="!rounded-full w-full bodyFont !tracking-normal !text-sm justify-center"
-              >
-                <RiHotelBedLine className="inline-block mr-1" />
-                Accommodation
-              </Button>
-            )}
+            {user?.college?.id !== "1" ? (
+              loadingAccommodation ? (
+                <Button
+                  size={"large"}
+                  onClick={() => setShowModal(true)}
+                  className="w-full !rounded-full bodyFont !tracking-normal !text-sm justify-center"
+                >
+                  <Spinner size={"small"} className="text-[#dd5c6e]" />
+                </Button>
+              ) : dataAccommodation?.accommodationRequestsByUser[0]?.status ? (
+                <Button
+                  intent={"info"}
+                  size={"large"}
+                  onClick={() => setShowModal(true)}
+                  className="w-full !rounded-full bodyFont !tracking-normal !text-sm justify-center"
+                >
+                  <RiHotelBedLine className="inline-block mr-1" />
+                  View Request
+                </Button>
+              ) : (
+                <Button
+                  intent={"success"}
+                  size={"large"}
+                  onClick={() => router.push("/accommodation")}
+                  className="!rounded-full w-full bodyFont !tracking-normal !text-sm justify-center"
+                >
+                  <RiHotelBedLine className="inline-block mr-1" />
+                  Accommodation
+                </Button>
+              )
+            ) : null}
             <Button
               onClick={() => router.push("/leaderboard")}
               className="!rounded-full w-full bodyFont !tracking-normal !text-sm justify-center"
